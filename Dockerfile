@@ -3,6 +3,9 @@ LABEL maintainer="cyrineappdeveloper.com"
 
 ENV PYTHONUNBUFFERED=1
 
+# Install bash and other tools needed for CI (optional but safer)
+RUN apk add --no-cache bash git
+
 # Copy requirements and app
 COPY ./requirements.txt /tmp/requirements.txt
 COPY ./requirements.dev.txt /tmp/requirements.dev.txt
@@ -11,15 +14,20 @@ COPY ./app /app
 WORKDIR /app
 EXPOSE 8000
 
-# Install Python venv, dependencies, and add user
+# Install Python venv and dependencies
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
     /py/bin/pip install -r /tmp/requirements.txt -r /tmp/requirements.dev.txt && \
-    rm -rf /tmp && \
-    adduser --disabled-password --no-create-home django-user
+    rm -rf /tmp
 
 # Add venv to PATH
 ENV PATH="/py/bin:$PATH"
 
-# Run as non-root user
+# Add non-root user
+RUN adduser --disabled-password --no-create-home django-user
+
+# Default user
 USER django-user
+
+# Default entrypoint (optional, helps GitHub Actions run commands)
+ENTRYPOINT ["sh", "-c"]
