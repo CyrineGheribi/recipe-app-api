@@ -27,6 +27,5 @@ jobs:
       - name: Test
         run: docker compose run --rm app python manage.py test
 
-      # Run flake8 lint
       - name: Lint
-        run: docker compose run --rm app flake8
+        run: docker compose run --rm app sh -c "flake8"
