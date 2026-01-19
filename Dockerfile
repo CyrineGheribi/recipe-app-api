@@ -6,6 +6,9 @@ ENV PYTHONUNBUFFERED=1
 # Install bash and other tools needed for CI (optional but safer)
 RUN apk add --no-cache bash git
 
+# Install system dependencies for psycopg2
+RUN apk add --no-cache gcc musl-dev postgresql-dev
+
 # Copy requirements and app
 COPY ./requirements.txt /tmp/requirements.txt
 COPY ./requirements.dev.txt /tmp/requirements.dev.txt
@@ -29,5 +32,5 @@ RUN adduser --disabled-password --no-create-home django-user
 # Default user
 USER django-user
 
-# Default entrypoint (optional, helps GitHub Actions run commands)
+# Default entrypoint (optional)
 ENTRYPOINT ["sh", "-c"]
